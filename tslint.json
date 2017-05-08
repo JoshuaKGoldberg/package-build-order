@@ -1,0 +1,11 @@
+{
+    "extends": "tslint:all",
+    "rules": {
+        "arrow-parens": [true, "ban-single-arg-parens"],
+        "array-type": [true, "array"],
+        "linebreak-style": [false],
+        "no-unused-variable": [false],
+        "only-arrow-functions": [true, "allow-named-functions"],
+        "typedef": [false]
+    }
+}

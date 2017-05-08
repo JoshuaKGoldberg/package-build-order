@@ -1,0 +1,41 @@
+{
+  "name": "package-build-order",
+  "version": "0.1.0",
+  "description": "Determines the dependency order in which to build npm packages.",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshuakgoldberg/package-build-order.git"
+  },
+  "keywords": [
+    "package build order npm"
+  ],
+  "author": {
+    "name": "Josh Goldberg",
+    "email": "joshuakgoldberg@outlook.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joshuakgoldberg/gulp-shenanigans/issues"
+  },
+  "homepage": "https://github.com/joshuakgoldberg/gulp-shenanigans#readme",
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "mz": "^2.6.0",
+    "toposort": "^1.0.3"
+  },
+  "devDependencies": {
+    "@types/mz": "0.0.31",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-tslint": "^8.0.0",
+    "gulp-typescript": "^3.1.6",
+    "merge2": "^1.0.3",
+    "run-sequence": "^1.2.2",
+    "tslint": "^5.2.0",
+    "typescript": "^2.3.2"
+  },
+  "scripts": {
+    "gulp": "gulp"
+  }
+}
