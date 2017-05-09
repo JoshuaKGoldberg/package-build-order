@@ -1,6 +1,6 @@
 {
   "name": "package-build-order",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Determines the dependency order in which to build npm packages.",
   "main": "lib/index.js",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "git+https://github.com/joshuakgoldberg/package-build-order.git"
   },
   "keywords": [
-    "package build order npm"
+    "package build order npm json tsconfig"
   ],
   "author": {
     "name": "Josh Goldberg",
@@ -21,8 +21,7 @@
   "homepage": "https://github.com/joshuakgoldberg/gulp-shenanigans#readme",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "mz": "^2.6.0",
-    "toposort": "^1.0.3"
+    "mz": "^2.6.0"
   },
   "devDependencies": {
     "@types/mz": "0.0.31",
