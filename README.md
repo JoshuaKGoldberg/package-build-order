@@ -30,3 +30,12 @@ const order = await buildOrder(new Map([
     ["second", "./path/to/second"]
 ]))
 ```
+
+You can also pass direct references to `.json` files, provided they provide `"dependencies"` as an array of project names.
+
+```javascript
+const order = await buildOrder({
+    "first": "./path/to/first/package.json",
+    "second": "./path/to/second/custom-settings.json"
+});
+```

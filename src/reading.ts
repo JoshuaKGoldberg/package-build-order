@@ -27,9 +27,9 @@ async function getPackageDependencies(packageName: string): Promise<string[]> {
 }
 
 async function getPackageContents(packageName: string): Promise<IPackageInfo> {
-    const fileName = packageName.endsWith("package.json")
+    const fileName = packageName.endsWith(".json")
         ? packageName
-        : path.join(packageName, "package.json");
+        : path.join(packageName, ".json");
 
     return JSON.parse((await fs.readFile(fileName)).toString());
 }
