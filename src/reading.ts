@@ -1,6 +1,10 @@
 import * as fs from "mz/fs";
 import * as path from "path";
 
+interface IDictionary<T> {
+    [i: string]: T;
+}
+
 interface IPackageInfo {
     dependencies?: string[];
     devDependencies?: string[];
@@ -21,8 +25,8 @@ async function getPackageDependencies(packageName: string): Promise<string[]> {
 
     return Array.from(
         new Set([
-            ...Object.keys(dependencies || {}),
-            ...Object.keys(devDependencies || {}),
+            ...flatten(dependencies || {}),
+            ...flatten(devDependencies || {}),
         ]));
 }
 
@@ -30,6 +34,13 @@ async function getPackageContents(packageName: string): Promise<IPackageInfo> {
     const fileName = packageName.endsWith(".json")
         ? packageName
         : path.join(packageName, ".json");
+    const contents = (await fs.readFile(fileName)).toString();
 
-    return JSON.parse((await fs.readFile(fileName)).toString());
+    return JSON.parse(contents);
+}
+
+function flatten(contents: string[] | IDictionary<string>): string[] {
+    return contents instanceof Array
+        ? contents
+        : Object.keys(contents);
 }

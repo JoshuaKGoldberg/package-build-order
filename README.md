@@ -39,3 +39,5 @@ const order = await buildOrder({
     "second": "./path/to/second/custom-settings.json"
 });
 ```
+
+*Requires Node >= 7*
