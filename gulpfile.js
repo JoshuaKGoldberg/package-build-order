@@ -48,7 +48,6 @@ var createTslintTask = (function () {
                 {
                     base: "."
                 })
-            .pipe(require("gulp-debug")())
             .pipe(gulpTslint({
                 formatter: "stylish",
                 program
