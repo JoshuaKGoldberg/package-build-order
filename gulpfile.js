@@ -48,11 +48,12 @@ var createTslintTask = (function () {
                 {
                     base: "."
                 })
+            .pipe(require("gulp-debug")())
             .pipe(gulpTslint({
                 formatter: "stylish",
                 program
             }))
-            .pipe(gulpTslint.report())
+            .pipe(gulpTslint.report());
     }
 
     return function (config, source) {
@@ -80,8 +81,21 @@ gulp.task("src", function (callback) {
 
 gulp.task("test:tsc", createTscTask("./test/tsconfig.json", "test"));
 gulp.task("test:tslint", createTslintTask("./test/tsconfig.json", "test"));
+
+gulp.task("test:run", function () {
+    var mocha = require("gulp-mocha");
+
+    return gulp.src("test/**/*.js")
+        .pipe(mocha({
+            reporter: "spec",
+        }))
+        .on("error", function () {
+            process.exitCode = 1;
+        });
+});
+
 gulp.task("test", function (callback) {
-    require("run-sequence").use(gulp)("test:tsc", "test:tslint", callback);
+    require("run-sequence").use(gulp)("test:tsc", "test:tslint",  "test:run", callback);
 });
 
 gulp.task("watch", ["tsc"], function () {

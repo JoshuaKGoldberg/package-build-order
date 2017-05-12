@@ -24,12 +24,19 @@
     "mz": "^2.6.0"
   },
   "devDependencies": {
+    "@types/chai": "^3.5.2",
+    "@types/chai-as-promised": "0.0.30",
+    "@types/mocha": "^2.2.41",
     "@types/mz": "0.0.31",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
+    "gulp-mocha": "^4.3.1",
     "gulp-tslint": "^8.0.0",
     "gulp-typescript": "^3.1.6",
     "merge2": "^1.0.3",
+    "mocha": "^3.3.0",
     "run-sequence": "^1.2.2",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
