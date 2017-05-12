@@ -7,3 +7,5 @@ debug.log
 # Built files
 lib/**
 src/**/*.js
+test/**/*.d.ts
+test/**/*.js
