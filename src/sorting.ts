@@ -1,4 +1,4 @@
-export function sortPackages(packages: Map<string, string[]>): string[] {
+export function sortPackages(packages: Map<string, Set<string>>): string[] {
     const order: string[] = [];
 
     generateOrder(packages, new Map<string, boolean>(), order);
@@ -6,7 +6,7 @@ export function sortPackages(packages: Map<string, string[]>): string[] {
     return order;
 }
 
-function generateOrder(packages: Map<string, string[]>, visited: Map<string, boolean>, order: string[]): void {
+function generateOrder(packages: Map<string, Set<string>>, visited: Map<string, boolean>, order: string[]): void {
     const visitPackage = (packageName: string): void => {
         if (visited.get(packageName)) {
             return;

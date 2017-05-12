@@ -10,8 +10,8 @@ interface IPackageInfo {
     devDependencies?: string[];
 }
 
-export async function getAllPackageDependencies(packagePaths: Map<string, string>): Promise<Map<string, string[]>> {
-    const packageDependencies = new Map<string, string[]>();
+export async function getAllPackageDependencies(packagePaths: Map<string, string>): Promise<Map<string, Set<string>>> {
+    const packageDependencies = new Map<string, Set<string>>();
 
     for (const [packageName, packagePath] of packagePaths) {
         packageDependencies.set(packageName, await getPackageDependencies(packagePath));
@@ -20,14 +20,13 @@ export async function getAllPackageDependencies(packagePaths: Map<string, string
     return packageDependencies;
 }
 
-async function getPackageDependencies(packageName: string): Promise<string[]> {
+async function getPackageDependencies(packageName: string): Promise<Set<string>> {
     const { dependencies, devDependencies } = await getPackageContents(packageName);
 
-    return Array.from(
-        new Set([
-            ...flatten(dependencies || {}),
-            ...flatten(devDependencies || {}),
-        ]));
+    return new Set([
+        ...flatten(dependencies || {}),
+        ...flatten(devDependencies || {}),
+    ]);
 }
 
 async function getPackageContents(packageName: string): Promise<IPackageInfo> {

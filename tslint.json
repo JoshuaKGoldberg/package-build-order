@@ -6,6 +6,7 @@
         "linebreak-style": [false],
         "no-unused-variable": [false],
         "only-arrow-functions": [true, "allow-named-functions"],
+        "space-before-function-paren": [false],
         "typedef": [false]
     }
 }
