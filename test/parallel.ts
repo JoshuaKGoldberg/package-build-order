@@ -7,7 +7,7 @@ import { DEPENDENT, fileReader, IPackageName, mockPathSettings, SINGLE, SOLO } f
 /**
  * Creates a build tracker pointing to the stubbed packages.
  *
- * @param packageName   Stubbed package names
+ * @param packageNames   Stubbed package names.
  * @returns A Promise for a new build tracker.
  */
 async function mockBuildTracker(...packageNames: IPackageName[]): Promise<ParallelBuildTracker> {
