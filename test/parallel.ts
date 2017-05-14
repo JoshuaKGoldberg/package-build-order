@@ -1,24 +1,8 @@
 import { expect } from "chai";
-import * as path from "path";
 
 import { getBuildTracker } from "../lib/parallel";
 import { ParallelBuildTracker } from "../lib/parallel/parallelBuildTracker";
-
-const DEPENDENT = "dependent";
-const SINGLE = "single";
-const SOLO = "solo";
-
-type IPackageName = typeof DEPENDENT | typeof SINGLE | typeof SOLO;
-
-const stubPackageContents = {
-    [path.join(DEPENDENT, ".json")]: JSON.stringify({
-        dependencies: [SINGLE],
-    }),
-    [path.join(SINGLE, ".json")]: JSON.stringify({}),
-    [path.join(SOLO, ".json")]: JSON.stringify({}),
-};
-
-const fileReader = async (packageName: IPackageName) => Promise.resolve(stubPackageContents[packageName]);
+import { DEPENDENT, fileReader, IPackageName, mockPathSettings, SINGLE, SOLO } from "./fakes";
 
 /**
  * Creates a build tracker pointing to the stubbed packages.
@@ -27,11 +11,7 @@ const fileReader = async (packageName: IPackageName) => Promise.resolve(stubPack
  * @returns A Promise for a new build tracker.
  */
 async function mockBuildTracker(...packageNames: IPackageName[]): Promise<ParallelBuildTracker> {
-    const paths = new Map<string, string>();
-
-    for (const packageName of packageNames) {
-        paths.set(packageName, path.join(packageName, ".json"));
-    }
+    const paths = await mockPathSettings(...packageNames);
 
     return await getBuildTracker({ paths, fileReader });
 }
