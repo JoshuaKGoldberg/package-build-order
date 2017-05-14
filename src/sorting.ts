@@ -1,4 +1,10 @@
-export function sortPackages(packages: Map<string, string[]>): string[] {
+/**
+ * Sorts packages into a safe build order.
+ *
+ * @param packages   Packages with their dependencies.
+ * @returns The packages in a safe build order.
+ */
+export function sortPackages(packages: Map<string, Set<string>>): string[] {
     const order: string[] = [];
 
     generateOrder(packages, new Map<string, boolean>(), order);
@@ -6,17 +12,27 @@ export function sortPackages(packages: Map<string, string[]>): string[] {
     return order;
 }
 
-function generateOrder(packages: Map<string, string[]>, visited: Map<string, boolean>, order: string[]): void {
+/**
+ * Recursively visits packages to generate a safe build order.
+ *
+ * @param packages   Packages with their dependencies.
+ * @param visited   Which packages have been visited.
+ * @param order   A safe build order in progress.
+ */
+function generateOrder(packages: Map<string, Set<string>>, visited: Map<string, boolean>, order: string[]): void {
     const visitPackage = (packageName: string): void => {
-        if (visited.get(packageName)) {
+        if (visited.get(packageName) === true) {
             return;
         }
 
         visited.set(packageName, true);
 
-        for (const dependency of packages.get(packageName) || []) {
-            if (packages.has(dependency)) {
-                visitPackage(dependency);
+        const dependencies = packages.get(packageName);
+        if (dependencies !== undefined) {
+            for (const dependency of dependencies) {
+                if (packages.has(dependency)) {
+                    visitPackage(dependency);
+                }
             }
         }
 
