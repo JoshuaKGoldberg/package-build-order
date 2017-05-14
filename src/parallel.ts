@@ -1,51 +1,37 @@
-import { normalizePackagePaths, PackagePaths } from "./packages";
-import { getAllPackageDependencies } from "./reading";
+import { readFile } from "mz/fs";
 
-export type BuildOrderGenerator = (completedPackage?: string) => Iterable<string[] | undefined>;
+import { normalizePackagePaths, PackagePaths } from "./packages";
+import { ParallelBuildTracker } from "./parallel/parallelBuildTracker";
+import { getAllPackageDependencies, IFileReader } from "./reading";
 
 /**
- * Creates a generator for newly buildable packages given completed dependencies.
- *
- * @param packagePaths   Package paths, keyed by package name.
- * @returns A Promise for a buildable promise generator.
+ * Settings to get a build tracker.
  */
-export async function buildParallel(packagePaths: PackagePaths): Promise<BuildOrderGenerator> {
-    packagePaths = normalizePackagePaths(packagePaths);
+export interface IBuildTrackerSettings {
+    /**
+     * Reads file contents.
+     */
+    fileReader?: IFileReader;
 
-    const dependencies = await getAllPackageDependencies(packagePaths);
-
-    return function* (completedPackage?: string): Iterable<string[] | undefined> {
-        if (dependencies.size === 0) {
-            return undefined;
-        }
-
-        return filterCompletedDependencies(dependencies, completedPackage);
-    };
+    /**
+     * Package paths, keyed by package name.
+     */
+    paths: PackagePaths;
 }
 
 /**
- * Filters out completed packages from a dependencies map.
+ * Creates a tracker for newly buildable packages given completed dependencies.
  *
- * @param dependencies   Map of packages to their incomplete dependencies.
- * @param completedPackage   A newly completed package, if not the first filter iteration.
- * @returns Newly buildable packages.
+ * @param settings   Settings to get a build tracker.
+ * @returns A Promise for a package build tracker.
  */
-function filterCompletedDependencies(dependencies: Map<string, Set<string>>, completedPackage?: string): string[] {
-    const finishedPackages: string[] = [];
+export async function getBuildTracker(settings: IBuildTrackerSettings): Promise<ParallelBuildTracker> {
+    const packagePaths = normalizePackagePaths(settings.paths);
+    const fileReader = settings.fileReader === undefined
+        ? (async (filePath: string) => (await readFile(filePath)).toString())
+        : settings.fileReader;
 
-    for (const [packageName, packageDependencies] of dependencies) {
-        if (completedPackage !== undefined) {
-            packageDependencies.delete(completedPackage);
-        }
+    const dependencies = await getAllPackageDependencies(packagePaths, fileReader);
 
-        if (packageDependencies.size === 0) {
-            finishedPackages.push(packageName);
-        }
-    }
-
-    for (const packageName of finishedPackages) {
-        dependencies.delete(packageName);
-    }
-
-    return finishedPackages;
+    return new ParallelBuildTracker(dependencies);
 }

@@ -1,4 +1,3 @@
-import * as fs from "mz/fs";
 import * as path from "path";
 
 interface IDictionary<T> {
@@ -11,16 +10,27 @@ interface IPackageInfo {
 }
 
 /**
+ * Reads a file's contents.
+ *
+ * @param filePath   Path to a file.
+ * @returns A Promise for the file's contents.
+ */
+export type IFileReader = (filePath: string) => Promise<string>;
+
+/**
  * Retrieves dependencies for packages.
  *
  * @param packagePaths   Package paths, keyed by package name.
+ * @param fileReader   Reads file contents.
  * @returns A Promise for packages with their dependencies.
  */
-export async function getAllPackageDependencies(packagePaths: Map<string, string>): Promise<Map<string, Set<string>>> {
+export async function getAllPackageDependencies(
+    packagePaths: Map<string, string>,
+    fileReader: IFileReader): Promise<Map<string, Set<string>>> {
     const packageDependencies = new Map<string, Set<string>>();
 
     for (const [packageName, packagePath] of packagePaths) {
-        packageDependencies.set(packageName, await getPackageDependencies(packagePath));
+        packageDependencies.set(packageName, await getPackageDependencies(packagePath, fileReader));
     }
 
     return packageDependencies;
@@ -30,10 +40,11 @@ export async function getAllPackageDependencies(packagePaths: Map<string, string
  * Retrieves dependencies for a package.
  *
  * @param packagePath   Path to a package file.
+ * @param fileReader   Reads file contents.
  * @returns A Promise for the package's dependencies.
  */
-async function getPackageDependencies(packagePath: string): Promise<Set<string>> {
-    const { dependencies, devDependencies } = await getPackageContents(packagePath);
+async function getPackageDependencies(packagePath: string, fileReader: IFileReader): Promise<Set<string>> {
+    const { dependencies, devDependencies } = await getPackageContents(packagePath, fileReader);
 
     return new Set([
         ...flatten(dependencies),
@@ -44,15 +55,16 @@ async function getPackageDependencies(packagePath: string): Promise<Set<string>>
 /**
  * Retrieves the contents for a package.
  *
+ * @param packagePath   Path to a package file.
+ * @param fileReader   Reads file contents.
  * @returns A Promise for the parsed package contents.
  */
-async function getPackageContents(packageName: string): Promise<IPackageInfo> {
-    const fileName = packageName.endsWith(".json")
-        ? packageName
-        : path.join(packageName, ".json");
-    const contents = (await fs.readFile(fileName)).toString();
+async function getPackageContents(packagePath: string, fileReader: IFileReader): Promise<IPackageInfo> {
+    const filePath = packagePath.endsWith(".json")
+        ? packagePath
+        : path.join(packagePath, ".json");
 
-    return JSON.parse(contents) as IPackageInfo;
+    return JSON.parse(await fileReader(filePath)) as IPackageInfo;
 }
 
 /**

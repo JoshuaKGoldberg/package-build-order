@@ -1,3 +1,4 @@
 export { IPackagePaths } from "./packages";
-export { BuildOrderGenerator, buildParallel } from "./parallel";
+export { getBuildTracker } from "./parallel";
+export { ParallelBuildTracker } from "./parallel/parallelBuildTracker";
 export { buildOrder } from "./series";

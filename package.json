@@ -1,6 +1,6 @@
 {
   "name": "package-build-order",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Determines the dependency order in which to build npm packages.",
   "main": "lib/index.js",
   "repository": {

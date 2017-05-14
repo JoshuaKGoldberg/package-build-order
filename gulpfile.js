@@ -89,7 +89,7 @@ gulp.task("test:run", function () {
             reporter: "spec",
         }))
         .on("error", function () {
-            process.exitCode = 1;
+            this.emit("end");
         });
 });
 
