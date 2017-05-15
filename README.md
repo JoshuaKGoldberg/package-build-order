@@ -1,5 +1,5 @@
 # package-build-order
-[![Build Status](https://travis-ci.org/joshuakgoldberg/package-build-order.svg?branch=master)](https://travis-ci.org/joshuakgoldberg/package-build-order)
+[![Build Status](https://travis-ci.org/JoshuaKGoldberg/package-build-order.svg?branch=master)](https://travis-ci.org/joshuakgoldberg/package-build-order)
 [![NPM version](https://badge.fury.io/js/package-build-order.svg)](http://badge.fury.io/js/package-build-order)
 
 Determines the dependency order in which to build packages.
