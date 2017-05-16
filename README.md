@@ -50,7 +50,7 @@ It returns a `Promise` for a tracker object with two methods:
 
 If `markCompleted` returns an empty `[]`, that indicates all possible packages have been completed.
 
-```typescript
+```javascript
 import { getBuildTracker } from "package-build-order";
 
 const tracker = getBuildTracker({
