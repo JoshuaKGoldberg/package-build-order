@@ -53,7 +53,7 @@ If `markCompleted` returns an empty `[]`, that indicates all possible packages h
 ```javascript
 import { getBuildTracker } from "package-build-order";
 
-const tracker = getBuildTracker({
+const tracker = await getBuildTracker({
     paths: {
         first: "./path/to/first", // dependencies: []
         second: "./path/to/second" // dependencies: ["first"]
