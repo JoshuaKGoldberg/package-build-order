@@ -2,7 +2,7 @@ import { expect } from "chai";
 
 import { getBuildTracker } from "../lib/parallel";
 import { ParallelBuildTracker } from "../lib/parallel/parallelBuildTracker";
-import { DEPENDENT, fileReader, IPackageName, mockPathSettings, SINGLE, SOLO } from "./fakes";
+import { DEPENDENT, EXTERNAL, fileReader, IPackageName, mockPathSettings, SINGLE, SOLO } from "./fakes";
 
 /**
  * Creates a build tracker pointing to the stubbed packages.
@@ -74,6 +74,17 @@ describe("ParallelBuildTracker", () => {
 
             // Assert
             expect(availablePackages).to.be.deep.equal([DEPENDENT]);
+        });
+
+        it("ignores unknown packages", async () => {
+            // Arrange
+            const tracker = await mockBuildTracker(SINGLE, EXTERNAL);
+
+            // Act
+            const availablePackages = tracker.markCompleted(SINGLE);
+
+            // Assert
+            expect(availablePackages).to.be.deep.equal([EXTERNAL]);
         });
 
         it("returns a blank array when done", async () => {

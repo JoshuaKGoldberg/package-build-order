@@ -28,9 +28,15 @@ export async function getAllPackageDependencies(
     packagePaths: Map<string, string>,
     fileReader: IFileReader): Promise<Map<string, Set<string>>> {
     const packageDependencies = new Map<string, Set<string>>();
+    const packageNames = new Set(packagePaths.keys()) ;
 
     for (const [packageName, packagePath] of packagePaths) {
-        packageDependencies.set(packageName, await getPackageDependencies(packagePath, fileReader));
+        const dependencies = await getPackageDependencies(packagePath, fileReader);
+        const knownDependencies = new Set(
+            Array.from(dependencies)
+                .filter(dependency => packageNames.has(dependency)));
+
+        packageDependencies.set(packageName, knownDependencies);
     }
 
     return packageDependencies;
