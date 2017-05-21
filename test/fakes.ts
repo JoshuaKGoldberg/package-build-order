@@ -1,14 +1,19 @@
 import * as path from "path";
 
 export const DEPENDENT = "dependent";
+export const EXTERNAL = "external";
 export const SINGLE = "single";
 export const SOLO = "solo";
+export const UNKNOWN = "unknown";
 
-export type IPackageName = typeof DEPENDENT | typeof SINGLE | typeof SOLO;
+export type IPackageName = typeof DEPENDENT | typeof EXTERNAL | typeof SINGLE | typeof SOLO;
 
 const stubPackageContents = {
     [path.join(DEPENDENT, ".json")]: JSON.stringify({
         dependencies: [SINGLE],
+    }),
+    [path.join(EXTERNAL, ".json")]: JSON.stringify({
+        dependencies: [SINGLE, UNKNOWN],
     }),
     [path.join(SINGLE, ".json")]: JSON.stringify({}),
     [path.join(SOLO, ".json")]: JSON.stringify({}),
