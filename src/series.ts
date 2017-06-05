@@ -1,6 +1,5 @@
-import { readFile } from "mz/fs";
-
 import { normalizePackagePaths, PackagePaths } from "./packages";
+import { readFileWithoutBom } from "./readFileWithoutBom";
 import { getAllPackageDependencies, IFileReader } from "./reading";
 import { sortPackages } from "./sorting";
 
@@ -28,7 +27,7 @@ export interface IBuildOrderSettings {
 export async function buildOrder(settings: IBuildOrderSettings): Promise<string[]> {
     const packagePaths = normalizePackagePaths(settings.paths);
     const fileReader = settings.fileReader === undefined
-        ? (async (filePath: string) => (await readFile(filePath)).toString())
+        ? (async (filePath: string) => (await readFileWithoutBom(filePath)).toString())
         : settings.fileReader;
 
     return sortPackages(await getAllPackageDependencies(packagePaths, fileReader));

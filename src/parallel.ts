@@ -1,7 +1,6 @@
-import { readFile } from "mz/fs";
-
 import { normalizePackagePaths, PackagePaths } from "./packages";
 import { ParallelBuildTracker } from "./parallel/parallelBuildTracker";
+import { readFileWithoutBom } from "./readFileWithoutBom";
 import { getAllPackageDependencies, IFileReader } from "./reading";
 
 /**
@@ -28,7 +27,7 @@ export interface IBuildTrackerSettings {
 export async function getBuildTracker(settings: IBuildTrackerSettings): Promise<ParallelBuildTracker> {
     const packagePaths = normalizePackagePaths(settings.paths);
     const fileReader = settings.fileReader === undefined
-        ? (async (filePath: string) => (await readFile(filePath)).toString())
+        ? (async (filePath: string) => (await readFileWithoutBom(filePath)).toString())
         : settings.fileReader;
 
     const dependencies = await getAllPackageDependencies(packagePaths, fileReader);
