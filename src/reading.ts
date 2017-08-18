@@ -1,4 +1,5 @@
 import * as path from "path";
+import * as stripJsonComments from "strip-json-comments";
 
 interface IDictionary<T> {
     [i: string]: T;
@@ -70,7 +71,7 @@ async function getPackageContents(packagePath: string, fileReader: IFileReader):
         ? packagePath
         : path.join(packagePath, ".json");
 
-    return JSON.parse(await fileReader(filePath)) as IPackageInfo;
+    return JSON.parse(stripJsonComments(await fileReader(filePath))) as IPackageInfo;
 }
 
 /**

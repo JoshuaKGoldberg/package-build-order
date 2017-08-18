@@ -21,13 +21,15 @@
   "homepage": "https://github.com/joshuakgoldberg/gulp-shenanigans#readme",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "mz": "^2.6.0"
+    "mz": "^2.6.0",
+    "strip-json-comments": "^2.0.1"
   },
   "devDependencies": {
     "@types/chai": "^3.5.2",
     "@types/chai-as-promised": "0.0.30",
     "@types/mocha": "^2.2.41",
     "@types/mz": "0.0.31",
+    "@types/strip-json-comments": "0.0.29",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "del": "^2.2.2",
