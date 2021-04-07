@@ -13,6 +13,16 @@ export interface IBuildOrderSettings {
     fileReader?: IFileReader;
 
     /**
+     * When reading dependencies, also check optionalDependencies
+     */
+    includeOptionalDependencies?: boolean;
+
+    /**
+     * When reading dependencies, also check peerDependencies
+     */
+    includePeerDependencies?: boolean;
+
+    /**
      * Package paths, keyed by package name.
      */
     paths: PackagePaths;
@@ -25,10 +35,20 @@ export interface IBuildOrderSettings {
  * @returns A Promise for the packages in a safe build order.
  */
 export async function buildOrder(settings: IBuildOrderSettings): Promise<string[]> {
-    const packagePaths = normalizePackagePaths(settings.paths);
-    const fileReader = settings.fileReader === undefined
-        ? (async (filePath: string) => (await readFileWithoutBom(filePath)).toString())
-        : settings.fileReader;
+    const normalizedSettings = {
+        fileReader: (async (filePath: string) => (await readFileWithoutBom(filePath)).toString()),
+        includeOptionalDependencies: false,
+        includePeerDependencies: false,
+        ...settings,
+    };
 
-    return sortPackages(await getAllPackageDependencies(packagePaths, fileReader));
+    const packagePaths = normalizePackagePaths(settings.paths);
+
+    const dependencies = await getAllPackageDependencies(
+        packagePaths,
+        normalizedSettings.fileReader,
+        normalizedSettings.includeOptionalDependencies,
+        normalizedSettings.includePeerDependencies);
+
+    return sortPackages(dependencies);
 }
