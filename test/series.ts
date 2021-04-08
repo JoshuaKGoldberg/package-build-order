@@ -1,7 +1,16 @@
 import { expect } from "chai";
-
 import { buildOrder } from "../lib/series";
-import { DEPENDENT, fileReader, IPackageName, mockPathSettings, SINGLE, SOLO } from "./fakes";
+import {
+    DEPENDENT,
+    DEV,
+    fileReader,
+    IPackageName,
+    mockPathSettings,
+    OPTIONAL,
+    PEER,
+    SINGLE,
+    SOLO,
+} from "./fakes";
 
 /**
  * Generates a build order from stubbed packages.
@@ -38,5 +47,29 @@ describe("buildOrder", () => {
 
         // Assert
         expect(order).to.be.deep.equal([SINGLE, DEPENDENT]);
+    });
+
+    it("returns packages in order when using dev dependencies", async () => {
+        // Act
+        const order = await mockBuildOrder(SINGLE, DEV, DEPENDENT);
+
+        // Assert
+        expect(order).to.be.deep.equal([SINGLE, DEV, DEPENDENT]);
+    });
+
+    it("returns packages in order when using peer dependencies", async () => {
+        // Act
+        const order = await mockBuildOrder(SINGLE, PEER, DEPENDENT);
+
+        // Assert
+        expect(order).to.be.deep.equal([SINGLE, PEER, DEPENDENT]);
+    });
+
+    it("returns packages in order when using optional dependencies", async () => {
+        // Act
+        const order = await mockBuildOrder(SINGLE, OPTIONAL, DEPENDENT);
+
+        // Assert
+        expect(order).to.be.deep.equal([SINGLE, OPTIONAL, DEPENDENT]);
     });
 });

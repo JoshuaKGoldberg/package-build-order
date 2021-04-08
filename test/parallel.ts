@@ -2,7 +2,18 @@ import { expect } from "chai";
 
 import { getBuildTracker } from "../lib/parallel";
 import { ParallelBuildTracker } from "../lib/parallel/parallelBuildTracker";
-import { DEPENDENT, EXTERNAL, fileReader, IPackageName, mockPathSettings, SINGLE, SOLO } from "./fakes";
+import {
+    DEPENDENT,
+    DEV,
+    EXTERNAL,
+    fileReader,
+    IPackageName,
+    mockPathSettings,
+    OPTIONAL,
+    PEER,
+    SINGLE,
+    SOLO,
+} from "./fakes";
 
 /**
  * Creates a build tracker pointing to the stubbed packages.
@@ -49,6 +60,39 @@ describe("ParallelBuildTracker", () => {
 
             // Assert
             expect(availablePackages).to.be.deep.equal([SINGLE]);
+        });
+
+        it("gives only available initial packages when some have dev dependencies ", async () => {
+            // Arrange
+            const tracker = await mockBuildTracker(DEPENDENT, DEV);
+
+            // Act
+            const availablePackages = tracker.getAvailablePackages();
+
+            // Assert
+            expect(availablePackages).to.be.deep.equal([DEV]);
+        });
+
+        it("gives only available initial packages when some have peer dependencies ", async () => {
+            // Arrange
+            const tracker = await mockBuildTracker(DEPENDENT, PEER);
+
+            // Act
+            const availablePackages = tracker.getAvailablePackages();
+
+            // Assert
+            expect(availablePackages).to.be.deep.equal([PEER]);
+        });
+
+        it("gives only available initial packages when some have optional dependencies ", async () => {
+            // Arrange
+            const tracker = await mockBuildTracker(DEPENDENT, OPTIONAL);
+
+            // Act
+            const availablePackages = tracker.getAvailablePackages();
+
+            // Assert
+            expect(availablePackages).to.be.deep.equal([OPTIONAL]);
         });
 
         it("gives newly available packages when a dependency is completed ", async () => {
