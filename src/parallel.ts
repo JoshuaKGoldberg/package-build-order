@@ -13,6 +13,16 @@ export interface IBuildTrackerSettings {
     fileReader?: IFileReader;
 
     /**
+     * When reading dependencies, also check optionalDependencies
+     */
+    includeOptionalDependencies?: boolean;
+
+    /**
+     * When reading dependencies, also check peerDependencies
+     */
+    includePeerDependencies?: boolean;
+
+    /**
      * Package paths, keyed by package name.
      */
     paths: PackagePaths;
@@ -25,12 +35,20 @@ export interface IBuildTrackerSettings {
  * @returns A Promise for a package build tracker.
  */
 export async function getBuildTracker(settings: IBuildTrackerSettings): Promise<ParallelBuildTracker> {
-    const packagePaths = normalizePackagePaths(settings.paths);
-    const fileReader = settings.fileReader === undefined
-        ? (async (filePath: string) => (await readFileWithoutBom(filePath)).toString())
-        : settings.fileReader;
+    const normalizedSettings = {
+        fileReader: (async (filePath: string) => (await readFileWithoutBom(filePath)).toString()),
+        includeOptionalDependencies: false,
+        includePeerDependencies: false,
+        ...settings,
+    };
 
-    const dependencies = await getAllPackageDependencies(packagePaths, fileReader);
+    const packagePaths = normalizePackagePaths(settings.paths);
+
+    const dependencies = await getAllPackageDependencies(
+        packagePaths,
+        normalizedSettings.fileReader,
+        normalizedSettings.includeOptionalDependencies,
+        normalizedSettings.includePeerDependencies);
 
     return new ParallelBuildTracker(dependencies);
 }

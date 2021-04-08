@@ -1,13 +1,11 @@
 import * as path from "path";
 import * as stripJsonComments from "strip-json-comments";
 
-interface IDictionary<T> {
-    [i: string]: T;
-}
-
 interface IPackageInfo {
-    dependencies?: string[];
-    devDependencies?: string[];
+    dependencies?: string[] | Record<string, string>;
+    devDependencies?: string[] | Record<string, string>;
+    optionalDependencies?: string[] | Record<string, string>;
+    peerDependencies?: string[] | Record<string, string>;
 }
 
 /**
@@ -27,12 +25,20 @@ export type IFileReader = (filePath: string) => Promise<string>;
  */
 export async function getAllPackageDependencies(
     packagePaths: Map<string, string>,
-    fileReader: IFileReader): Promise<Map<string, Set<string>>> {
+    fileReader: IFileReader,
+    includeOptionalDependencies: boolean,
+    includePeerDependencies: boolean,
+): Promise<Map<string, Set<string>>> {
     const packageDependencies = new Map<string, Set<string>>();
     const packageNames = new Set(packagePaths.keys()) ;
 
     for (const [packageName, packagePath] of packagePaths) {
-        const dependencies = await getPackageDependencies(packagePath, fileReader);
+        const dependencies = await getPackageDependencies(
+            packagePath,
+            fileReader,
+            includeOptionalDependencies,
+            includePeerDependencies);
+
         const knownDependencies = new Set(
             Array.from(dependencies)
                 .filter(dependency => packageNames.has(dependency)));
@@ -50,12 +56,24 @@ export async function getAllPackageDependencies(
  * @param fileReader   Reads file contents.
  * @returns A Promise for the package's dependencies.
  */
-async function getPackageDependencies(packagePath: string, fileReader: IFileReader): Promise<Set<string>> {
-    const { dependencies, devDependencies } = await getPackageContents(packagePath, fileReader);
+async function getPackageDependencies(
+    packagePath: string,
+    fileReader: IFileReader,
+    includeOptionalDependencies: boolean,
+    includePeerDependencies: boolean,
+): Promise<Set<string>> {
+    const {
+        dependencies,
+        devDependencies,
+        optionalDependencies,
+        peerDependencies,
+    } = await getPackageContents(packagePath, fileReader);
 
     return new Set([
         ...flatten(dependencies),
         ...flatten(devDependencies),
+        ...flatten(includeOptionalDependencies ? optionalDependencies : []),
+        ...flatten(includePeerDependencies ? peerDependencies : []),
     ]);
 }
 
@@ -80,7 +98,7 @@ async function getPackageContents(packagePath: string, fileReader: IFileReader):
  * @param contents   Some form of storage for dependencies.
  * @returns A flattened dependencies listing.
  */
-function flatten(contents: string[] | IDictionary<string> = []): string[] {
+function flatten(contents: string[] | Record<string, string> = []): string[] {
     return contents instanceof Array
         ? contents
         : Object.keys(contents);
